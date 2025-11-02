@@ -45,8 +45,8 @@ n_sigmas_hampel = 3
 ventana_sg = 11  # debe ser impar
 orden_sg = 3
 
-carpeta_entrada = "3000datos"
-carpeta_salida = "Filtrados"
+carpeta_entrada = "Datos Raw"
+carpeta_salida = "Datos_Filtrados"
 os.makedirs(carpeta_salida, exist_ok=True)
 
 # -----------------------------
@@ -111,3 +111,4 @@ for sujeto in sorted(os.listdir(carpeta_entrada)):
             plt.grid(True)
             plt.tight_layout()
             plt.show()
+
