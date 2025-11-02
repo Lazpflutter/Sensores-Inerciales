@@ -1,21 +1,32 @@
 import os
 import pandas as pd
 
-# Carpeta raíz donde están tus archivos de características
-carpeta_entrada = "Caracteristicas"
-archivo_salida = "Todas_caracteristicas.csv"
+# -------------------------------
+# ⚙️ CONFIGURACIÓN
+# -------------------------------
+carpeta_entrada = "Caracteristicas_Datos"
+archivo_salida = "Matriz_Caracteristicas.csv"
 
-# Lista para guardar todos los DataFrames
+# Carpetas destino
+carpeta_SVM = "Metricas_SVM"
+carpeta_KNN = "Metricas_KNN"
+
+# Crear las carpetas si no existen
+os.makedirs(carpeta_SVM, exist_ok=True)
+os.makedirs(carpeta_KNN, exist_ok=True)
+
+# -------------------------------
+# 📂 UNIFICAR LOS ARCHIVOS
+# -------------------------------
 todos_dfs = []
 
-# Recorrer carpetas y subcarpetas
 for root, dirs, files in os.walk(carpeta_entrada):
     for file in files:
         if file.endswith(".csv"):
             ruta_archivo = os.path.join(root, file)
             df = pd.read_csv(ruta_archivo)
             
-            # Extraer clase y sujeto de la ruta o archivo
+            # Detectar clase según el nombre del archivo
             if "_Quieto_" in file:
                 clase = "Quieto"
             elif "_Caminar_" in file:
@@ -27,21 +38,32 @@ for root, dirs, files in os.walk(carpeta_entrada):
             
             sujeto = os.path.basename(root)
             
-            # Añadir columnas de referencia
             df["Clase"] = clase
             df["Sujeto"] = sujeto
             
             todos_dfs.append(df)
 
-# Concatenar todos los DataFrames
+# Concatenar y ordenar
 df_final = pd.concat(todos_dfs, ignore_index=True)
-
-# Ordenar primero por Clase y luego por Sujeto
 orden_clases = {"Quieto": 0, "Caminar": 1, "Correr": 2, "Desconocida": 3}
 df_final["Clase_orden"] = df_final["Clase"].map(orden_clases)
 df_final = df_final.sort_values(by=["Clase_orden", "Sujeto"]).drop(columns=["Clase_orden"])
 
-# Guardar en un solo CSV
+# -------------------------------
+# 💾 GUARDAR EN MÚLTIPLES CARPETAS
+# -------------------------------
+# Guardar en la carpeta principal (opcional)
 df_final.to_csv(archivo_salida, index=False)
-print(f"✅ Todos los archivos combinados y ordenados en: {archivo_salida}")
-print(f"Filas totales: {len(df_final)}")
+
+# Guardar copias en Metricas_SVM y Metricas_KNN
+ruta_svm = os.path.join(carpeta_SVM, archivo_salida)
+ruta_knn = os.path.join(carpeta_KNN, archivo_salida)
+
+df_final.to_csv(ruta_svm, index=False)
+df_final.to_csv(ruta_knn, index=False)
+
+print(f"✅ Archivo combinado guardado en:")
+print(f" - {os.path.abspath(archivo_salida)}")
+print(f" - {os.path.abspath(ruta_svm)}")
+print(f" - {os.path.abspath(ruta_knn)}")
+print(f"\n📊 Filas totales: {len(df_final)} | Columnas: {len(df_final.columns)}")
