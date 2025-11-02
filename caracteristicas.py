@@ -7,8 +7,8 @@ from scipy.stats import entropy
 # -----------------------------
 # ⚙️ CONFIGURACIÓN
 # -----------------------------
-carpeta_entrada = "Filtrados"
-carpeta_salida = "Caracteristicas"
+carpeta_entrada = "Datos_Filtrados"
+carpeta_salida = "Caracteristicas_Datos"
 os.makedirs(carpeta_salida, exist_ok=True)
 
 fs = 100               # Frecuencia de muestreo [Hz]
@@ -114,3 +114,4 @@ for sujeto in sorted(os.listdir(carpeta_entrada)):
             salida_csv = os.path.join(carpeta_salida_sujeto, nombre_salida)
 
             procesar_archivo(ruta_archivo, salida_csv)
+
